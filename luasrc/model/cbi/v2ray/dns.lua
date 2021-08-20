@@ -27,6 +27,7 @@ o = s1:option(Flag, "enabled", translate("Enabled"))
 o.rmempty = false
 
 o = s1:option(Value, "tag", translate("Tag"))
+o.rmempty = false
 
 o = s1:option(Value, "client_ip", translate("Client IP"),
 	"<a href=\"https://icanhazip.com\" target=\"_blank\">%s</a>" % translate("Get my public IP address"))
@@ -55,4 +56,7 @@ o.placeholder = "53"
 
 o = s2:option(DynamicList, "domains", translate("Domains"))
 
+o = s2:option(DynamicList, "expect_ips", translate("Expect IP")
+o.placeholder = "geoip:cn"
+	
 return m
