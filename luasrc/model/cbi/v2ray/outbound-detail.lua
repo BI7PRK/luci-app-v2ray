@@ -51,6 +51,8 @@ o:value("http", "HTTP/2")
 o:value("mtproto", "MTProto")
 o:value("shadowsocks", "Shadowsocks")
 o:value("socks", "Socks")
+o:value("trojan", "Trojan") -- add Trojan Protocol support
+o:value("vless","VLESS")  -- add VLESS Protocol support
 o:value("vmess", "VMess")
 
 -- Settings Blackhole
@@ -161,6 +163,34 @@ o = s:option(Value, "s_socks_user_level", "%s - %s" % { "Socks", translate("User
 o:depends("protocol", "socks")
 o.datatype = "uinteger"
 
+-- Settings - Trojan
+o = s:option(Value, "s_trojan_address", "%s - %s" % { "Trojan", translate("Address") })
+o:depends("protocol", "trojan")
+o.datatype = "host"
+
+o = s:option(Value, "s_trojan_port", "%s - %s" % { "Trojan", translate("Port") })
+o:depends("protocol", "trojan")
+o.datatype = "port"
+
+o = s:option(Value, "s_trojan_password", "%s - %s" % { "Trojan", translate("Password") })
+o:depends("protocol", "trojan")
+
+-- Settings - VLESS
+o = s:option(Value, "s_vless_address", "%s - %s" % { "VLESS", translate("Address") })
+o:depends("protocol", "vless")
+o.datatype = "host"
+
+o = s:option(Value, "s_vless_port", "%s - %s" % { "VLESS", translate("Port") })
+o:depends("protocol", "vless")
+o.datatype = "port"
+
+o = s:option(Value, "s_vless_user_id", "%s - %s" % { "VLESS", translate("User ID") })
+o:depends("protocol", "vless")
+
+o = s:option(ListValue, "s_vless_encryption", "%s - %s" % { "VLESS", translate("Encryption") } )
+o:depends("protocol", "vless")
+o:value("none", "none")
+
 -- Settings - VMess
 o = s:option(Value, "s_vmess_address", "%s - %s" % { "VMess", translate("Address") })
 o:depends("protocol", "vmess")
@@ -199,18 +229,35 @@ o:value("http", "HTTP/2")
 o:value("domainsocket", "Domain Socket")
 o:value("quic", "QUIC")
 
-o = s:option(ListValue, "ss_security", "%s - %s" % { translate("Stream settings"), translate("Security") })
-o:value("")
+o = s:option(ListValue, "ss_security", "%s - %s" % { translate("Stream settings"), translate("Security"), " })
 o:value("none", translate("None"))
 o:value("tls", "TLS")
 
+-- add xTLS support
+o = s:option(Flag, "ss_xtls_enabled", "%s - %s" % { "xTLS", translate("Enable")},'xTLS Only works under protocols "Trojan/VLESS" through "TCP/mKCP/DomainSocket" transportations')
+o:depends("ss_security", "tls") 
+		
+-- add xTLS Flow control	
+o = s:options(ListValue, "ss_xtls_flow", translate("Flow")) 
+o:depends("ss_xtls_enabled", true)
+o:value("xtls-rprx-direct","xtls-rprx-direct")
+o:value("xtls-rprx-direct-udp443","xtls-rprx-direct-udp443")
+o:value("xtls-rprx-origin","xtls-rprx-origin")
+o:value("xtls-rprx-origin-udp443","xtls-rprx-origin-udp443")
+o:value("xtls-rprx-splice","xtls-rprx-splice")
+o:value("xtls-rprx-splice-udp443","xtls-rprx-splice-udp443")
+	
 -- Stream Settings - TLS
 o = s:option(Value, "ss_tls_server_name", "%s - %s" % { "TLS", translate("Server name") })
 o:depends("ss_security", "tls")
 
-o = s:option(Value, "ss_tls_alpn", "%s - %s" % { "TLS", "ALPN" })
+-- add h2 ALPN Support
+o = s:option(ListValue, "ss_tls_alpn", "%s - %s" % { "TLS", "ALPN" })  
 o:depends("ss_security", "tls")
-o.placeholder = "http/1.1"
+o:value("http/1.1", "http/1.1")
+o:value("h2", "h2")
+o:value("h2,http/1.1", "h2,http/1.1")
+
 
 o = s:option(Flag, "ss_tls_allow_insecure", "%s - %s" % { "TLS", translate("Allow insecure") })
 o:depends("ss_security", "tls")
@@ -365,6 +412,19 @@ o:value("wireguard", "WireGuard")
 o = s:option(Value, "ss_sockopt_mark", "%s - %s" % { translate("Sockopt"), translate("Mark") },
 	translate("If transparent proxy is enabled, this option is ignored and will be set to 255."))
 o.placeholder = "255"
+-- Socket Options Domain Strategy Objects
+o = s:option(ListValue, "ss_sockopt_domainStrategy", "%s - %s" % { translate("Sockopt"), translate("Domain Strategy")}) 
+o:depends("protocol", "http")
+o:depends("protocol", "mtproto")
+o:depends("protocol", "shadowsocks")
+o:depends("protocol", "socks")
+o:depends("protocol", "trojan")
+o:depends("protocol", "vless")
+o:depends("protocol", "vmess")
+o:value("AsIs", "AsIs")
+o:value("UseIP", "UseIP")
+o:value("UseIPv4", "UseIPv4")
+o:value("UseIPv6", "UseIPv6")
 
 o = s:option(ListValue, "ss_sockopt_tcp_fast_open", "%s - %s" % { translate("Sockopt"), translate("TCP fast open") })
 o:value("")
@@ -373,12 +433,18 @@ o:value("1", translate("True"))
 
 -- Other Settings
 o = s:option(Value, "tag", translate("Tag"))
-
+--blank outbound tag check 
+o.rmempty false 
+		
 o = s:option(Value, "proxy_settings_tag", "%s - %s" % { translate("Proxy settings"), translate("Tag") })
 
 o = s:option(Flag, "mux_enabled", "%s - %s" % { translate("Mux"), translate("Enabled") })
+-- mux is not supported by xtls
+o:depends("ss_xtls_enabled", false)  
 
 o = s:option(Value, "mux_concurrency", "%s - %s" % { translate("Mux"), translate("Concurrency") })
+-- add dependency
+o:depends("mux_enabled", true) 
 o.datatype = "uinteger"
 o.placeholder = "8"
 
