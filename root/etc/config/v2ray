@@ -13,6 +13,10 @@ config v2ray 'main'
 
 config dns 'main_dns'
 	option enabled '1'
+	option disable_cache '0'
+	option disable_fallback '0'
+	option disable_fallback_if_match '0'
+	option skip_fallback '0'
 	list hosts 'example.com|127.0.0.1'
 	option servers 'cloudflare_dns_1 google_dns_1 114_dns_1 ali_dns_1'
 
@@ -38,6 +42,7 @@ config dns_server '114_dns_1'
 config dns_server 'ali_dns_1'
 	option alias 'ali_dns_1'
 	option address '223.5.5.5'
+	option s_client_ip ''
 	list domains 'geosite:cn'
 
 config routing 'main_routing'

@@ -9,6 +9,11 @@ msgstr "必须设置 %s"
 msgid "<code>transport</code> field in top level configuration, JSON string"
 msgstr "配置文件中的 <code>transport</code> 项，JSON 字符串"
 
+#: package/htdocs/luci-static/resources/view/v2ray/inbound.js:400
+#: package/htdocs/luci-static/resources/view/v2ray/outbound.js:500
+msgid "XTLS Flow"
+msgstr "XTLS流控"
+
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:271
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:286
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:335
@@ -37,6 +42,30 @@ msgstr "一个用于构建网络代理的平台"
 #: package/htdocs/luci-static/resources/view/v2ray/transparent-proxy.js:168
 msgid "APNIC delegated mirror"
 msgstr "APNIC 分配列表镜像"
+
+#: package/htdocs/luci-static/resources/view/v2ray/dns.js:28
+msgid "Can be configured as a non-private IP address"
+msgstr "可用配置为一个非私有IP地址"
+
+#: package/htdocs/luci-static/resources/view/v2ray/dns.js:42
+msgid "Disable Cache"
+msgstr "禁用缓存"
+
+#: package/htdocs/luci-static/resources/view/v2ray/dns.js:45
+msgid "Disable Fallback"
+msgstr "禁用fallback查询"
+
+#: package/htdocs/luci-static/resources/view/v2ray/dns.js:46
+msgid "Disable Fallback If Match"
+msgstr "优先匹配列表fallback"
+
+#: package/htdocs/luci-static/resources/view/v2ray/dns.js:48
+msgid "Skip Fallback"
+msgstr "跳过Fallback查询"
+
+#: package/htdocs/luci-static/resources/view/v2ray/dns.js:50
+msgid "Query Strategy"
+msgstr "查询策略"
 
 #: package/htdocs/luci-static/resources/view/v2ray/about.js:27
 #: package/luasrc/controller/v2ray.lua:31
@@ -191,9 +220,14 @@ msgstr "证书用途"
 msgid "Client ID"
 msgstr "用户 ID"
 
-#: package/htdocs/luci-static/resources/view/v2ray/dns.js:29
+#: package/htdocs/luci-static/resources/view/v2ray/dns.js:39
 msgid "Client IP"
-msgstr "系统 IP 地址"
+msgstr "客户端IP"
+
+#: package/htdocs/luci-static/resources/view/v2ray/inbound.js:188
+#: package/htdocs/luci-static/resources/view/v2ray/outbound.js:188
+msgid "Use XTLS mode in VLESS protocol"
+msgstr "VLESS协议中使用XTLS模式"
 
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:185
 msgid "Client User level"
@@ -444,8 +478,8 @@ msgid "General Settings"
 msgstr "常规设置"
 
 #: package/htdocs/luci-static/resources/view/v2ray/dns.js:29
-msgid "Get my public IP address"
-msgstr "获取我的公网 IP 地址"
+msgid "Visit my public IP address"
+msgstr "查看我的公网 IP 地址"
 
 #: package/htdocs/luci-static/resources/view/v2ray/include/custom.js:198
 msgid "Getting..."
@@ -553,6 +587,7 @@ msgstr "已导入 %d 条链接。"
 msgid "Inbound"
 msgstr "入站连接"
 
+#: package/htdocs/luci-static/resources/view/v2ray/outbound.js:65
 #: package/htdocs/luci-static/resources/view/v2ray/routing.js:65
 msgid "Inbound tag"
 msgstr "入站连接标识"
@@ -621,8 +656,8 @@ msgid "Log level"
 msgstr "日志等级"
 
 #: package/htdocs/luci-static/resources/view/v2ray/about.js:27
-msgid "LuCI support for V2Ray."
-msgstr "V2Ray 的 LuCI 配置界面"
+msgid "LuCI support for V2Ray and Xray-core."
+msgstr "V2Ray 及 Xray-core 的 LuCI 配置界面"
 
 #: package/htdocs/luci-static/resources/view/v2ray/outbound.js:495
 msgid "Mark"
@@ -1022,7 +1057,7 @@ msgstr "端口分配策略"
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:36
 #: package/htdocs/luci-static/resources/view/v2ray/outbound.js:186
 msgid "Stream Settings"
-msgstr ""
+msgstr "数据流设置"
 
 #: package/htdocs/luci-static/resources/view/v2ray/policy.js:35
 #: package/htdocs/luci-static/resources/view/v2ray/policy.js:36
