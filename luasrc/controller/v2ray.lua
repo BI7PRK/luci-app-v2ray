@@ -20,15 +20,17 @@ function index()
 
 	entry({"admin", "services", "v2ray", "dns"}, view("v2ray/dns"), _("DNS"), 40)
 
-	entry({"admin", "services", "v2ray", "routing"}, view("v2ray/routing"), _("Routing"), 50)
+  entry({"admin", "services", "v2ray", "routing"}, view("v2ray/routing"), _("Routing"), 50)
 
-	entry({"admin", "services", "v2ray", "policy"}, view("v2ray/policy"), _("Policy"), 60)
+  entry({"admin", "services", "v2ray", "observatory"}, view("v2ray/observatory"), _("Observatory"), 60)
 
-	entry({"admin", "services", "v2ray", "reverse"}, view("v2ray/reverse"), _("Reverse"), 70)
+	entry({"admin", "services", "v2ray", "policy"}, view("v2ray/policy"), _("Policy"), 70)
 
-	entry({"admin", "services", "v2ray", "transparent-proxy"}, view("v2ray/transparent-proxy"), _("Transparent Proxy"), 80)
+	entry({"admin", "services", "v2ray", "reverse"}, view("v2ray/reverse"), _("Reverse"), 80)
 
-  entry({"admin", "services", "v2ray", "about"}, view("v2ray/about"), _("About"), 90)
+	entry({"admin", "services", "v2ray", "transparent-proxy"}, view("v2ray/transparent-proxy"), _("Transparent Proxy"), 90)
+
+  entry({"admin", "services", "v2ray", "about"}, view("v2ray/about"), _("About"), 100)
 
   entry({"admin", "services", "v2ray", "request"}, call("action_request"))
 end

@@ -1015,6 +1015,10 @@ msgstr "使用 TProxy 来设置转发规则。"
 msgid "Sniffing"
 msgstr "流量探测"
 
+#: package/htdocs/luci-static/resources/view/v2ray/inbound.js:384
+msgid "routeOnly"
+msgstr "仅作用于路由"
+
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:369
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:374
 #: package/htdocs/luci-static/resources/view/v2ray/outbound.js:495
@@ -1362,3 +1366,16 @@ msgstr "wget: 不支持 SSL, 请安装 %s 或 %s。"
 
 #~ msgid "Updating..."
 #~ msgstr "更新中..."
+
+#: package/htdocs/luci-static/resources/view/v2ray/observatory.ts:100
+msgid "ProbeURL"
+msgstr "检测地址"
+
+#: package/htdocs/luci-static/resources/view/v2ray/observatory.ts:101
+msgid "ProbeInterval"
+msgstr "探测间隔"
+
+
+#: package/htdocs/luci-static/resources/view/v2ray/observatory.ts:102
+msgid "SubjectSelector"
+msgstr "出站标识前缀"

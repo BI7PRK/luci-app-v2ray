@@ -26,6 +26,17 @@ if [ "x$dns" != "xdns" ] ; then
 	EOF
 fi
 
+# observatory
+observatory=$(uci -q get v2ray.main_observatory)
+if [ "x$observatory" != "xobservatory" ] ; then
+	uci -q batch <<-EOF >/dev/null
+		add v2ray observatory
+		rename v2ray.@observatory[-1]="main_observatory"
+		set v2ray.main_observatory.enabled="0"
+		commit v2ray
+	EOF
+fi
+
 # routing
 routing=$(uci -q get v2ray.main_routing)
 if [ "x$routing" != "xrouting" ] ; then

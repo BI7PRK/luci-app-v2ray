@@ -171,6 +171,14 @@ dns_server_section_validate() {
 		'client_ip:ipaddr'
 }
 
+observatory_section_validate() {
+	uci_validate_section "$NAME" "observatory" "$1" \
+		'enabled:bool:0' \
+		'probeURL:string' \
+		'probeInterval:string' \
+		'subjectSelector:list(string)'
+}
+
 routing_section_validate() {
 	uci_validate_section "$NAME" "routing" "$1" \
 		'enabled:bool:0' \
@@ -306,6 +314,7 @@ inbound_section_validate() {
 		'ss_sockopt_tproxy:or("redirect", "tproxy", "off")' \
 		'tag:string' \
 		'sniffing_enabled:bool:0' \
+		'routeOnly_enabled:bool:0' \
 		'sniffing_dest_override:list(or("http", "tls"))' \
 		'allocate_strategy:or("always", "random")' \
 		'allocate_refresh:uinteger' \
@@ -821,6 +830,36 @@ add_dns_settings() {
 	fi
 
 	json_close_object # dns
+}
+
+add_observatory_settings() {
+	local section="${1}_observatory"
+	if ! observatory_section_validate "$section" ; then
+		_err "Invalid routing config: $section, skip"
+		return 1
+	fi
+
+	if [ "x$enabled" != "x1" ] ; then
+		_info "observatory disabled: $section"
+		return 0
+	fi
+
+	json_add_object "observatory"
+
+	test -n "$probeURL" && \
+		json_add_string "probeURL" "$probeURL"
+	
+	test -n "$probeInterval" && \
+		json_add_string "probeInterval" "$probeInterval"
+	if [ -n "$subjectSelector" ] ; then
+		json_add_array "subjectSelector"
+		local str
+		for str in $subjectSelector ; do
+			json_add_string "" "$str"
+		done
+		json_close_array # observatory
+	fi
+
 }
 
 add_routing_settings() {
@@ -1498,6 +1537,8 @@ add_inbound_setting() {
 	json_add_object "sniffing"
 
 	json_add_boolean "enabled" "$sniffing_enabled"
+
+	json_add_boolean "redonly" "$redonly_enabled"
 
 	if [ -n "$sniffing_dest_override" ] ; then
 		json_add_array "destOverride"
@@ -2259,6 +2300,7 @@ start_instance() {
 		fi
 
 		add_dns_settings "$section"
+		add_observatory_settings "$section"
 		add_routing_settings "$section"
 		add_policy_settings "$section"
 		add_reverse_settings "$section"
