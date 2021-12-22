@@ -1538,7 +1538,7 @@ add_inbound_setting() {
 
 	json_add_boolean "enabled" "$sniffing_enabled"
 
-	json_add_boolean "redonly" "$redonly_enabled"
+	json_add_boolean "routeOnly" "$routeOnly_enabled"
 
 	if [ -n "$sniffing_dest_override" ] ; then
 		json_add_array "destOverride"

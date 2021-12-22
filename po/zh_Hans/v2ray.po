@@ -1367,6 +1367,10 @@ msgstr "wget: 不支持 SSL, 请安装 %s 或 %s。"
 #~ msgid "Updating..."
 #~ msgstr "更新中..."
 
+#: package/htdocs/luci-static/resources/view/v2ray/observatory.ts:99
+msgid "Observatory"
+msgstr "连接观测"
+
 #: package/htdocs/luci-static/resources/view/v2ray/observatory.ts:100
 msgid "ProbeURL"
 msgstr "检测地址"

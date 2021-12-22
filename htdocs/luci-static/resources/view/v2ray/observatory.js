@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2020 Xingwang Liao <kuoruan@gmail.com>
+ * Copyright 2021 BI7PRK
  *
  * Licensed to the public under the MIT License.
  */
