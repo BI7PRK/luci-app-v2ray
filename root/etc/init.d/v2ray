@@ -183,6 +183,7 @@ routing_section_validate() {
 	uci_validate_section "$NAME" "routing" "$1" \
 		'enabled:bool:0' \
 		'domain_strategy:or("AsIs", "IPIfNonMatch", "IPOnDemand")' \
+		'domain_matcher:or("linear", "mph")' \
 		'rules:list(uci("v2ray", "@routing_rule"))' \
 		'balancers:list(uci("v2ray", "@routing_balancer"))'
 }
@@ -206,6 +207,7 @@ routing_rule_section_validate() {
 routing_balancer_section_validate() {
 	uci_validate_section "$NAME" "routing_balancer" "$1" \
 		'tag:string' \
+		'strategy_type:or("random", "leastPing")' \
 		'selector:list(string)'
 }
 
@@ -880,6 +882,9 @@ add_routing_settings() {
 	test -n "$domain_strategy" && \
 		json_add_string "domainStrategy" "$domain_strategy"
 
+	test -n "$domain_matcher" && \
+		json_add_string "domainMatcher" "$domain_matcher"
+
 	if [ -n "$rules" ] ; then
 		json_add_array "rules"
 
@@ -984,6 +989,10 @@ add_routing_settings() {
 			if routing_balancer_section_validate "$bs" ; then
 				json_add_object ""
 				json_add_string "tag" "$tag"
+
+				json_add_object "strategy"
+				json_add_string "type" "$strategy_type"
+				json_close_object
 
 				json_add_array "selector"
 
