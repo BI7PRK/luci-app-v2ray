@@ -857,9 +857,9 @@ add_observatory_settings() {
 		for str in $subjectSelector ; do
 			json_add_string "" "$str"
 		done
-		json_close_array # observatory
+		json_close_array # subjectSelector
 	fi
-
+	json_close_object # observatory
 }
 
 add_routing_settings() {
