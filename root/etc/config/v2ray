@@ -117,14 +117,12 @@ config routing_rule 'direct_ntp'
 	list network 'udp'
 	list port '123'
 	option outbound_tag 'direct'
-
+	
 config routing_balancer 'routing_balancer_1'
 	option tag 'balancer'
+	option strategy_type 'random'
 	list selector 'a'
 	list selector 'ab'
-
-config routing_balancer_type 'routing_balancer_type_0'
-	option strategy_type 'random'
 
 config policy 'main_policy'
 	option enabled '0'

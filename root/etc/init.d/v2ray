@@ -201,7 +201,8 @@ routing_rule_section_validate() {
 		'protocol:list(or("http", "tls", "bittorrent"))' \
 		'attrs:string' \
 		'outbound_tag:string' \
-		'balancer_tag:string'
+		'balancer_tag:string' \
+		'domain_matcher_r:or("", "linear", "mph")' 
 }
 
 routing_balancer_section_validate() {
@@ -973,6 +974,8 @@ add_routing_settings() {
 					json_add_string "outboundTag" "$outbound_tag"
 				test -n "$balancer_tag" && \
 					json_add_string "balancerTag" "$balancer_tag"
+				test -n "$domain_matcher_r" && \
+					json_add_string "domainMatcher" "$domain_matcher_r"
 
 				json_close_object
 			fi
