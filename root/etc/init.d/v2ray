@@ -265,6 +265,7 @@ inbound_section_validate() {
 		's_shadowsocks_ota:bool:0' \
 		's_shadowsocks_network:list(or("tcp", "udp")):tcp' \
 		's_socks_auth:or("noauth", "password")' \
+		's_socks_version:or("4", "4a", "5")' \
 		's_socks_account_user:string' \
 		's_socks_account_pass:string' \
 		's_socks_udp:bool:0' \
@@ -318,7 +319,8 @@ inbound_section_validate() {
 		'tag:string' \
 		'sniffing_enabled:bool:0' \
 		'routeOnly_enabled:bool:0' \
-		'sniffing_dest_override:list(or("http", "tls"))' \
+		'sniffing_dest_override:list(or("http", "tls", "fakedns", "fakedns+others"))' \
+		'metadata_only:bool:0' \
 		'allocate_strategy:or("always", "random")' \
 		'allocate_refresh:uinteger' \
 		'allocate_concurrency:uinteger'
@@ -403,6 +405,12 @@ outbound_section_validate() {
 		'ss_domainsocket_path:string' \
 		'ss_quic_security:or("aes-128-gcm", "chacha20-poly1305", "none")' \
 		'ss_quic_key:string' \
+		'service_name:string' \
+		'multi_mode:bool:0' \
+		'idle_timeout:uinteger' \
+		'health_check_timeout:uinteger' \
+		'permit_without_stream:bool:0' \
+		'initial_windows_size:uinteger' \
 		'ss_quic_header_type:or("none", "srtp", "utp", "wechat-video", "dtls", "wireguard")' \
 		'ss_sockopt_mark:uinteger' \
 		'ss_sockopt_domain_strategy:or("", "AsIs", "UseIP", "UseIPv4", "UseIPv6")' \
@@ -1257,6 +1265,9 @@ add_inbound_setting() {
 				json_close_array # accounts
 			fi
 
+			test -n "$s_socks_version" && \
+				json_add_string "version" "$s_socks_version"
+
 			json_add_boolean "udp" "$s_socks_udp"
 
 			test -n "$s_socks_ip" && \
@@ -1550,7 +1561,9 @@ add_inbound_setting() {
 
 	json_add_boolean "enabled" "$sniffing_enabled"
 
-	json_add_boolean "routeOnly" "$routeOnly_enabled"
+	if [ "x$routeOnly_enabled" = "x1" ] ;  then
+		json_add_boolean "routeOnly" "$routeOnly_enabled"
+	fi
 
 	if [ -n "$sniffing_dest_override" ] ; then
 		json_add_array "destOverride"
@@ -1559,6 +1572,9 @@ add_inbound_setting() {
 			json_add_string "" "$d"
 		done
 		json_close_array # destOverride
+	fi
+	if [ "x$metadata_only" = "x1" ] ;  then
+		json_add_boolean "metadataOnly" "$metadata_only"
 	fi
 
 	json_close_object # sniffing
@@ -2023,6 +2039,26 @@ add_outbound_setting() {
 
 			json_close_object # quicSettings
 			;;
+			# outbound gRPC
+			"grpc")
+				json_add_object "grpcSettings"
+				test -n "$service_name" && \
+					json_add_string "serviceName" "$service_name"
+				if [ "x$multi_mode" = "x1"] ; then
+					json_add_boolean "multiMode" "$multi_mode"
+				fi
+				test -n "$idle_timeout" && \
+					json_add_int "idle_timeout" "$idle_timeout"
+				test -n "$health_check_timeout" && \
+					json_add_int "health_check_timeout" "$health_check_timeout"
+				if [ "x$permit_without_stream" = "x1"] ; then
+					json_add_boolean "permit_without_stream" "$permit_without_stream"
+				fi
+				test -n "$initial_windows_size" && \
+					json_add_int "initial_windows_size" "$initial_windows_size"
+				json_close_object # grpcSettings
+				;;
+
 	esac
 
 	json_add_object "sockopt"

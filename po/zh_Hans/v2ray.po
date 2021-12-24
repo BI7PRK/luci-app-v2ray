@@ -9,6 +9,38 @@ msgstr "必须设置 %s"
 msgid "<code>transport</code> field in top level configuration, JSON string"
 msgstr "配置文件中的 <code>transport</code> 项，JSON 字符串"
 
+#: package/htdocs/luci-static/resources/view/v2ray/inbound.js:398
+msgid "Version"
+msgstr "版本"
+
+#: package/htdocs/luci-static/resources/view/v2ray/inbound.js:399
+msgid "metadata only"
+msgstr "仅使用元数据推断"
+
+#: package/htdocs/luci-static/resources/view/v2ray/outbound.js:498
+msgid "Service name"
+msgstr "服务名称"
+
+#: package/htdocs/luci-static/resources/view/v2ray/outbound.js:497
+msgid "Multi mode"
+msgstr "多模式"
+
+#: package/htdocs/luci-static/resources/view/v2ray/outbound.js:496
+msgid "Idle timeout"
+msgstr "空闲超时"
+
+#: package/htdocs/luci-static/resources/view/v2ray/outbound.js:475
+msgid "Health check timeout"
+msgstr "健康检查超时"
+
+#: package/htdocs/luci-static/resources/view/v2ray/outbound.js:473
+msgid "Permit without stream"
+msgstr "无流许可"
+
+#: package/htdocs/luci-static/resources/view/v2ray/outbound.js:472
+msgid "Initial windows size"
+msgstr "初始窗口大小"
+
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:400
 #: package/htdocs/luci-static/resources/view/v2ray/outbound.js:500
 msgid "XTLS Flow"
@@ -1391,3 +1423,11 @@ msgstr "探测间隔"
 #: package/htdocs/luci-static/resources/view/v2ray/observatory.ts:102
 msgid "SubjectSelector"
 msgstr "出站标识前缀"
+
+#: package/htdocs/luci-static/resources/view/v2ray/observatory.ts:103
+msgid "empty use the built-in value"
+msgstr "留空使用内建测试地址"
+
+#: package/htdocs/luci-static/resources/view/v2ray/observatory.ts:103
+msgid "A valid URL, it will be get request to testing. eg: <code>%s</code>."
+msgstr "一个有效的网址。 通过GET请求进行测试。例如 <code>%s</code>"
