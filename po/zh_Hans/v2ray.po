@@ -43,8 +43,8 @@ msgstr "初始窗口大小"
 
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:400
 #: package/htdocs/luci-static/resources/view/v2ray/outbound.js:500
-msgid "XTLS Flow"
-msgstr "XTLS流控"
+msgid "xTLS Flow"
+msgstr "xTLS流控"
 
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:271
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:286
@@ -262,8 +262,8 @@ msgstr "客户端IP"
 
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:188
 #: package/htdocs/luci-static/resources/view/v2ray/outbound.js:188
-msgid "Use XTLS mode in VLESS protocol"
-msgstr "VLESS协议中使用XTLS模式"
+msgid "Use xTLS mode in protocol"
+msgstr "协议中使用XTLS模式"
 
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:185
 msgid "Client User level"
