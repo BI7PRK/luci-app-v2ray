@@ -145,6 +145,7 @@ v2ray_section_validate() {
 		'loglevel:or("debug", "info", "warning", "error", "none")' \
 		'access_log:string' \
 		'error_log:string' \
+		'dnsLog:bool:0' \
 		'stats_enabled:bool:0' \
 		'transport_enabled:bool:0' \
 		'inbounds:list(uci("v2ray", "@inbound"))' \
@@ -157,7 +158,6 @@ dns_section_validate() {
 		'disable_cache:bool:0' \
 		'disable_fallback:bool:0' \
 		'disable_fallback_if_match:bool:0' \
-		'skip_fallback:bool:0' \
 		'query_strategy:or("UseIP", "UseIPv4", "UseIPv6")' \
 		'tag:string' \
 		'client_ip:ipaddr' \
@@ -171,6 +171,7 @@ dns_server_section_validate() {
 		'port:port' \
 		'domains:list(string)' \
 		'expect_ips:list(string)' \
+		'skip_fallback:bool:0' \
 		'client_ip:ipaddr'
 }
 
@@ -275,15 +276,14 @@ inbound_section_validate() {
 		's_socks_ip:host' \
 		's_socks_user_level:uinteger' \
 		's_vmess_client_id:string' \
-		's_vmess_client_alter_id:and(uinteger, max(65535))' \
 		's_vmess_client_email:string' \
 		's_vmess_client_user_level:uinteger' \
-		's_vmess_default_alter_id:and(uinteger, max(65535))' \
 		's_vmess_default_user_level:uinteger' \
 		's_vmess_detour_to:string' \
 		's_vmess_disable_insecure_encryption:bool:0' \
 		'ss_network:or("tcp", "kcp", "ws", "http", "domainsocket", "quic")' \
 		'ss_security:or("none", "tls")' \
+		's_xtls_flow:or("none", "xtls-rprx-direct", "xtls-rprx-direct-udp443", "xtls-rprx-origin", "xtls-rprx-origin-udp443", "xtls-rprx-splice", "xtls-rprx-splice-udp443")' \
 		'ss_tls_server_name:host' \
 		'ss_tls_alpn:list(string)' \
 		'ss_tls_allow_insecure:bool:0' \
@@ -364,7 +364,6 @@ outbound_section_validate() {
 		's_vmess_address:host' \
 		's_vmess_port:port' \
 		's_vmess_user_id:string' \
-		's_vmess_user_alter_id:and(uinteger, max(65535))' \
 		's_vmess_user_security:or("auto", "aes-128-gcm", "chacha20-poly1305", "none")' \
 		's_vmess_user_level:uinteger' \
 		's_vless_address:host' \
@@ -761,8 +760,6 @@ add_dns_settings() {
 		json_add_boolean "disableFallback" "$disable_fallback"
 	test -n "$disable_fallback_if_match" &&
 		json_add_boolean "disableFallbackIfMatch" "$disable_fallback_if_match"
-	test -n "$skip_fallback" &&
-		json_add_boolean "skipFallback" "$skip_fallback"
 	test -n "$query_strategy" &&
 		json_add_string "queryStrategy" "$query_strategy"
 	test -n "$tag" &&
@@ -776,11 +773,18 @@ add_dns_settings() {
 		local h
 		for h in $hosts; do
 			local domain="$(echo "$h" | cut -d'|' -f1)"
-			local ip="$(echo "$h" | cut -d'|' -f2)"
-
-			if [ -n "$domain" ] && [ -n "$ip" ]; then
-				json_add_string "$domain" "$ip"
+			local ip_arr
+			local OLD_IFS="$IFS"
+			IFS="," ip_arr="$(echo "$h" | cut -d'|' -f2)"
+			if [ -n "$domain" ] && [ -n "$ip_arr" ] ; then
+				json_add_array "$domain" 
+				local ip
+				for ip in $ip_arr ; do
+					json_add_string "" "$ip"
+				done
+				json_close_array
 			fi
+			IFS="$OLD_IFS"
 		done
 
 		json_close_object # hosts
@@ -832,6 +836,8 @@ add_dns_settings() {
 						json_close_array # expectIPs
 					fi
 
+					json_add_boolean "skipFallback" "$skip_fallback"
+					
 					if [ -n "$client_ip" ]; then
 						json_add_string "clientIp" "$client_ip"
 					fi
@@ -1212,14 +1218,6 @@ add_inbound_setting() {
 
 		json_close_object # settings
 		;;
-		# "loopback")
-		# 	json_add_object "settings"
-
-		# 	if [ -n "$s_loopback_inboundtag" ] ; then
-		# 		json_add_string "inboundTag" "$s_loopback_inboundtag"
-		# 	fi
-		# 	json_close_object
-		# 	;;
 	"mtproto")
 		json_add_object "settings"
 
@@ -1290,8 +1288,8 @@ add_inbound_setting() {
 
 			json_add_string "id" "$s_vmess_client_id"
 
-			test -n "$s_vmess_client_alter_id" &&
-				json_add_int "alterId" "$s_vmess_client_alter_id"
+			# test -n "$s_vmess_client_alter_id" &&
+			# 	 json_add_int "alterId" "$s_vmess_client_alter_id"
 			test -n "$s_vmess_client_email" &&
 				json_add_string "email" "$s_vmess_client_email"
 			test -n "$s_vmess_client_user_level" &&
@@ -1303,8 +1301,8 @@ add_inbound_setting() {
 
 		json_add_object "default"
 
-		test -n "$s_vmess_default_alter_id" &&
-			json_add_int "alterId" "$s_vmess_default_alter_id"
+		# test -n "$s_vmess_default_alter_id" &&
+		# 	json_add_int "alterId" "$s_vmess_default_alter_id"
 		test -n "$s_vmess_default_user_level" &&
 			json_add_int "level" "$s_vmess_default_user_level"
 
@@ -1327,11 +1325,16 @@ add_inbound_setting() {
 	test -n "$ss_network" &&
 		json_add_string "network" "$ss_network"
 
-	test -n "$ss_security" &&
-		json_add_string "security" "$ss_security"
-
 	if [ "$ss_security" = "tls" ]; then
 		json_add_object "tlsSettings"
+		if [ "$s_xtls_flow" != "none" ]; then
+			json_add_string "security" "xtls"
+			json_add_object "xtlsSettings"
+
+		else
+			json_add_string "security" "$ss_security"
+			json_add_object "tlsSettings"
+		fi
 
 		test -n "$ss_tls_server_name" &&
 			json_add_string "serverName" "$ss_tls_server_name"
@@ -1363,6 +1366,9 @@ add_inbound_setting() {
 		json_close_array # certificates
 
 		json_close_object # tlsSettings
+	else
+		test -n "$ss_security" &&
+			json_add_string "security" "$ss_security"
 	fi
 
 	case "${ss_network:-x}" in
@@ -1797,7 +1803,7 @@ add_outbound_setting() {
 		json_add_array "users"
 		json_add_object ""
 		json_add_string "id" "$s_vmess_user_id"
-		json_add_int "alterId" "$s_vmess_user_alter_id"
+		# json_add_int "alterId" "$s_vmess_user_alter_id"
 		test -n "$s_vmess_user_security" &&
 			json_add_string "security" "$s_vmess_user_security"
 		test -n "$s_vmess_user_level" &&
@@ -2333,6 +2339,10 @@ start_instance() {
 		if [ -n "$loglevel" ] && [ "$loglevel" != "none" ]; then
 			json_add_string "loglevel" "$loglevel"
 			json_add_string "error" "$error_log"
+		fi
+
+		if [ "x$dnsLog" = "x1" ]; then
+			json_add_boolean "dnsLog" "$dnsLog"
 		fi
 
 		json_close_object # log
