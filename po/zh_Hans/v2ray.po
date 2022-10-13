@@ -9,6 +9,11 @@ msgstr "必须设置 %s"
 msgid "<code>transport</code> field in top level configuration, JSON string"
 msgstr "配置文件中的 <code>transport</code> 项，JSON 字符串"
 
+#: package/htdocs/luci-static/resources/view/v2ray/main.js:96
+msgid "Enabled DNS log"
+msgstr "开启DNS查询日志"
+
+
 #: package/htdocs/luci-static/resources/view/v2ray/inbound.js:398
 msgid "Version"
 msgstr "版本"

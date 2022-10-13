@@ -286,6 +286,7 @@ inbound_section_validate() {
 		's_xtls_flow:or("none", "xtls-rprx-direct", "xtls-rprx-direct-udp443", "xtls-rprx-origin", "xtls-rprx-origin-udp443", "xtls-rprx-splice", "xtls-rprx-splice-udp443")' \
 		'ss_tls_server_name:host' \
 		'ss_tls_alpn:list(string)' \
+		'u_tls:or("", "chrome", "firefox", "safari", "randomized")' \
 		'ss_tls_allow_insecure:bool:0' \
 		'ss_tls_allow_insecure_ciphers:bool:0' \
 		'ss_tls_disable_system_root:bool:0' \
@@ -377,6 +378,7 @@ outbound_section_validate() {
 		's_xtls_flow:or("none", "xtls-rprx-direct", "xtls-rprx-direct-udp443", "xtls-rprx-origin", "xtls-rprx-origin-udp443", "xtls-rprx-splice", "xtls-rprx-splice-udp443")' \
 		'ss_tls_server_name:host' \
 		'ss_tls_alpn:list(string)' \
+		'u_tls:or("", "chrome", "firefox", "safari", "randomized")' \
 		'ss_tls_allow_insecure:bool:0' \
 		'ss_tls_allow_insecure_ciphers:bool:0' \
 		'ss_tls_disable_system_root:bool:0' \
@@ -1348,6 +1350,10 @@ add_inbound_setting() {
 			json_close_array # destOverride
 		fi
 
+		if [ "$u_tls" != "" ]; then
+			json_add_string "fingerprint" "$u_tls"
+		fi
+
 		json_add_boolean "allowInsecure" "$ss_tls_allow_insecure"
 		json_add_boolean "allowInsecureCiphers" "$ss_tls_allow_insecure_ciphers"
 		json_add_boolean "disableSystemRoot" "$ss_tls_disable_system_root"
@@ -1845,6 +1851,9 @@ add_outbound_setting() {
 				json_add_string "" "$al"
 			done
 			json_close_array # destOverride
+		fi
+		if [ "$u_tls" != "" ]; then
+			json_add_string "fingerprint" "$u_tls"
 		fi
 		json_add_boolean "allowInsecure" "$ss_tls_allow_insecure"
 		json_add_boolean "allowInsecureCiphers" "$ss_tls_allow_insecure_ciphers"
