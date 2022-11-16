@@ -283,7 +283,7 @@ inbound_section_validate() {
 		's_vmess_disable_insecure_encryption:bool:0' \
 		'ss_network:or("tcp", "kcp", "ws", "http", "domainsocket", "quic")' \
 		'ss_security:or("none", "tls")' \
-		's_xtls_flow:or("none", "xtls-rprx-direct", "xtls-rprx-direct-udp443", "xtls-rprx-origin", "xtls-rprx-origin-udp443", "xtls-rprx-splice", "xtls-rprx-splice-udp443")' \
+		's_xtls_flow:or("none", "xtls-rprx-direct", "xtls-rprx-direct-udp443", "xtls-rprx-origin", "xtls-rprx-origin-udp443", "xtls-rprx-splice", "xtls-rprx-splice-udp443", "xtls-rprx-vision", "xtls-rprx-vision-udp443")' \
 		'ss_tls_server_name:host' \
 		'ss_tls_alpn:list(string)' \
 		'u_tls:or("", "chrome", "firefox", "safari", "randomized")' \
@@ -376,7 +376,7 @@ outbound_section_validate() {
 		'ss_network:or("tcp", "kcp", "ws", "http", "domainsocket", "quic", "grpc")' \
 		'ss_security:or("none", "tls")' \
 		'ss_xtls_enabled:bool:0' \
-		's_xtls_flow:or("none", "xtls-rprx-direct", "xtls-rprx-direct-udp443", "xtls-rprx-origin", "xtls-rprx-origin-udp443", "xtls-rprx-splice", "xtls-rprx-splice-udp443")' \
+		's_xtls_flow:or("none", "xtls-rprx-direct", "xtls-rprx-direct-udp443", "xtls-rprx-origin", "xtls-rprx-origin-udp443", "xtls-rprx-splice", "xtls-rprx-splice-udp443", "xtls-rprx-vision", "xtls-rprx-vision-udp443")' \
 		'ss_tls_server_name:host' \
 		'ss_tls_alpn:list(string)' \
 		'u_tls:or("", "chrome", "firefox", "safari", "randomized")' \
@@ -1331,7 +1331,7 @@ add_inbound_setting() {
 
 	if [ "$ss_security" = "tls" ]; then
 		json_add_object "tlsSettings"
-		if [ "$s_xtls_flow" != "none" ] && [ "$s_xtls_flow" != "xtls-rprx-visio*" ]; then
+		if [ "$s_xtls_flow" != "none" ] && [ "${s_xtls_flow:10:6}" != "vision" ]; then
 			json_add_string "security" "xtls"
 			json_add_object "xtlsSettings"
 
@@ -1339,7 +1339,7 @@ add_inbound_setting() {
 			json_add_string "security" "$ss_security"
 			json_add_object "tlsSettings"
 		fi
-
+	 "security" "xtls"
 		test -n "$ss_tls_server_name" &&
 			json_add_string "serverName" "$ss_tls_server_name"
 
@@ -1841,7 +1841,7 @@ add_outbound_setting() {
 	#test -n "$ss_security" && \
 	case "${ss_security:-x}" in
 	"tls")
-		if [ "$ss_security" = "tls" ] && [ "$s_xtls_flow" != "none" ] && [ "$s_xtls_flow" != "xtls-rprx-visio*" ]; then
+		if [ "$ss_security" = "tls" ] && [ "$s_xtls_flow" != "none" ] && [ "${s_xtls_flow:10:6}" != "vision" ]; then
 			json_add_string "security" "xtls"
 			json_add_object "xtlsSettings"
 
