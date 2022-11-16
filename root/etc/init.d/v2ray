@@ -287,6 +287,7 @@ inbound_section_validate() {
 		'ss_tls_server_name:host' \
 		'ss_tls_alpn:list(string)' \
 		'u_tls:or("", "chrome", "firefox", "safari", "randomized")' \
+		'ss_tls_rejectUnknownSni:bool:0' \
 		'ss_tls_allow_insecure:bool:0' \
 		'ss_tls_allow_insecure_ciphers:bool:0' \
 		'ss_tls_disable_system_root:bool:0' \
@@ -379,6 +380,7 @@ outbound_section_validate() {
 		'ss_tls_server_name:host' \
 		'ss_tls_alpn:list(string)' \
 		'u_tls:or("", "chrome", "firefox", "safari", "randomized")' \
+		'ss_tls_rejectUnknownSni:bool:0' \
 		'ss_tls_allow_insecure:bool:0' \
 		'ss_tls_allow_insecure_ciphers:bool:0' \
 		'ss_tls_disable_system_root:bool:0' \
@@ -1329,7 +1331,7 @@ add_inbound_setting() {
 
 	if [ "$ss_security" = "tls" ]; then
 		json_add_object "tlsSettings"
-		if [ "$s_xtls_flow" != "none" ]; then
+		if [ "$s_xtls_flow" != "none" ] && [ "$s_xtls_flow" != "xtls-rprx-visio*" ]; then
 			json_add_string "security" "xtls"
 			json_add_object "xtlsSettings"
 
@@ -1354,7 +1356,12 @@ add_inbound_setting() {
 			json_add_string "fingerprint" "$u_tls"
 		fi
 
-		json_add_boolean "allowInsecure" "$ss_tls_allow_insecure"
+		test -n "$ss_tls_server_name" &&
+					json_add_string "serverName" "$ss_tls_server_name"
+
+		if [ "x$ss_tls_rejectUnknownSni" = "x1" ]; then
+			json_add_boolean "rejectUnknownSni" "$ss_tls_rejectUnknownSni"
+		fi
 		json_add_boolean "allowInsecureCiphers" "$ss_tls_allow_insecure_ciphers"
 		json_add_boolean "disableSystemRoot" "$ss_tls_disable_system_root"
 
@@ -1834,7 +1841,7 @@ add_outbound_setting() {
 	#test -n "$ss_security" && \
 	case "${ss_security:-x}" in
 	"tls")
-		if [ "$ss_security" = "tls" ] && [ "$s_xtls_flow" != "none" ]; then
+		if [ "$ss_security" = "tls" ] && [ "$s_xtls_flow" != "none" ] && [ "$s_xtls_flow" != "xtls-rprx-visio*" ]; then
 			json_add_string "security" "xtls"
 			json_add_object "xtlsSettings"
 
@@ -1854,6 +1861,9 @@ add_outbound_setting() {
 		fi
 		if [ "$u_tls" != "" ]; then
 			json_add_string "fingerprint" "$u_tls"
+		fi
+		if [ "x$ss_tls_rejectUnknownSni" = "x1" ]; then
+			json_add_boolean "rejectUnknownSni" "$ss_tls_rejectUnknownSni"
 		fi
 		json_add_boolean "allowInsecure" "$ss_tls_allow_insecure"
 		json_add_boolean "allowInsecureCiphers" "$ss_tls_allow_insecure_ciphers"

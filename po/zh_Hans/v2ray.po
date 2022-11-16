@@ -22,6 +22,10 @@ msgstr "版本"
 msgid "metadata only"
 msgstr "仅使用元数据推断"
 
+#: package/htdocs/luci-static/resources/view/v2ray/outbound.js:560
+msgid "Reject Unknown SNI"
+msgstr "拒绝未知的SNI"
+
 #: package/htdocs/luci-static/resources/view/v2ray/outbound.js:498
 msgid "Service name"
 msgstr "服务名称"
