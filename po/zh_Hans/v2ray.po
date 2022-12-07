@@ -386,6 +386,14 @@ msgstr "禁用系统自带的 CA 证书"
 msgid "Dismiss"
 msgstr "取消"
 
+#: package/htdocs/luci-static/resources/view/v2ray/outbound.js:157
+msgid "min TLS version"
+msgstr "最小TLS版本"
+
+#: package/htdocs/luci-static/resources/view/v2ray/outbound.js:158
+msgid "max TLS version"
+msgstr "最高TLS版本"
+
 #: package/htdocs/luci-static/resources/view/v2ray/routing.js:51
 msgid "Domain"
 msgstr "域名"
